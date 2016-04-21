@@ -9,40 +9,29 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>things-alarm Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-    <link rel="import" href="../things-alarm.html">
-  </head>
-  <body unresolved>
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
 
-    <p>An example of <code>&lt;things-alarm&gt;</code>:</p>
+    <link rel="import" href="../things-alarm-badge.html">
+</head>
 
-    <p>Make words! <button id="saybtn">Say Something</button></p>
-    <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
+<body unresolved>
+    <p class="paper-font-subhead">Things Alarm</p>
+    <demo-snippet class="centered-demo">
+      <template>
+        <things-alarm-badge count="3"></things-alarm-badge>
 
-    <things-alarm author='{"name": "Lord Meowser", "image": "http://lorempixel.com/g/300/200/cats/"}' fancy>
-      <h2>Hello things-alarm</h2>
-    </things-alarm>
+        <div class="buttons">
+          <paper-button raised id="alarm-button">Alarm Badge Click</paper-button>
+        </div>
+      </template>
+    </demo-snippet>
+</body>
 
-    <script>
-      var seedElement = document.querySelector('things-alarm');
-
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
-      });
-
-      document.querySelector('#laserbtn').addEventListener('click', function() {
-        seedElement.fireLasers();
-      });
-
-      document.addEventListener("things-alarm-lasers", function(e) {
-        console.log(e.detail.sound);
-      });
-
-    </script>
-
-  </body>
 </html>
