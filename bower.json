@@ -1,6 +1,6 @@
 {
   "name": "things-alarm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
@@ -10,9 +10,9 @@
     "polymer",
     "seed"
   ],
-  "main": "things-alarm.html",
+  "main": "elements.html",
   "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/ThingsElements/seed-element/",
+  "homepage": "https://github.com/ThingsElements/things-alarm/",
   "ignore": [
     "/.*",
     "/test/"
