@@ -87,6 +87,10 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
     }     
   </style>
   <template>
+    <things-i18n-msg auto msgid="label.title" msg="{{lTitle}}" hidden>Title</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.created-at" msg="{{lCreatedAt}}" hidden>Created At</things-i18n-msg>
+    <things-i18n-msg auto msgid="label.content" msg="{{lContent}}" hidden>Content</things-i18n-msg>
+  
     <iron-signals id="signals"></iron-signals>
     <iron-localstorage id="alarm-storage" name="alarmMessages" value="{{messages}}"></iron-localstorage>
 
@@ -111,11 +115,11 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
         <div>
           <div class="layout horizontal">
-            <things-input-field class="flex" label="Title" value="[[title]]" readonly></things-input-field>
-            <things-input-field class="flex" label="Created At" value="[[createdAt]]" readonly></things-input-field>
+            <things-input-field class="flex" label="[[lTitle]]" value="[[title]]" readonly></things-input-field>
+            <things-input-field class="flex" label="[[lCreatedAt]]" value="[[createdAt]]" readonly></things-input-field>
           </div>
           <div>
-            <things-textarea class="flex" label="Content" value="[[content]]" readonly></things-textarea>
+            <things-textarea class="flex" label="[[lContent]]" value="[[content]]" readonly></things-textarea>
           </div>
         </div>
     </paper-dialog>
