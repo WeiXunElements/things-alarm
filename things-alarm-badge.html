@@ -115,6 +115,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
     <things-i18n-msg auto msgid="label.title" msg="{{lTitle}}" hidden>Title</things-i18n-msg>
     <things-i18n-msg auto msgid="label.created-at" msg="{{lCreatedAt}}" hidden>Created At</things-i18n-msg>
     <things-i18n-msg auto msgid="label.content" msg="{{lContent}}" hidden>Content</things-i18n-msg>
+    <things-i18n-msg auto msgid="text.message-is-full" msg="{{tMessageIsFull}}" hidden>Message is full, old message will be deleted.</things-i18n-msg>
 
     <iron-signals id="signals"></iron-signals>
     <iron-localstorage id="alarm-storage" name="alarmMessages" value="{{messages}}"></iron-localstorage>
@@ -188,6 +189,22 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
           },
 
           /**
+           * 보관할 수 있는 메시지의 최대수
+           */
+          maxCount: {
+            type: Number,
+            value: 20
+          },
+
+          /**
+           * 보관함 최대수량을 무시할지 여부
+           */
+          ignoreMaxCount: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
            * count가 0이면 isNoMsg가 true가 되어 badge를 hidden 처리한다.
            */
           isNoMsg: {
@@ -244,10 +261,18 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
         /**
          * 새로 전달 받은 message를 messages에 추가하고
+         * 최대 수량에 따라 메시지를 제거함
          * count의 값을 계산하는 function 호출
          */
         addMessage: function(message) {
           this.unshift('messages', message);
+
+          if(this.messages.length > this.maxCount && !this.ignoreMaxCount) {
+            this.openInfoMsg(this.tMessageIsFull)
+            while(this.messages.length > this.maxCount) {
+              this.splice('messages', -1, 1);
+            }
+          }
           this.calcCount();
         },
 
