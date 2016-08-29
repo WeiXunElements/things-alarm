@@ -75,26 +75,21 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
         @apply(--layout-flex);
         @apply(--layout-vertical);
     }
-
     paper-dialog::shadow .toolbar-tools.paper-toolbar {
         padding: 0
     }
-
     paper-dialog::shadow span.title.things-image-selector {
         margin-left: 15px !important
     }
-
     paper-toolbar {
         background-color: var(--things-primary-background-color);
         height: 45px;
         margin-top: 0px !important;
         @apply(--things-padding-clear)
     }
-
     paper-toolbar::shadow #topBar {
         height: 45px;
     }
-
     paper-toolbar .title {
         margin-left: 32px !important;
         line-height: initial !important;
@@ -115,10 +110,10 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
     <things-i18n-msg auto msgid="label.title" msg="{{lTitle}}" hidden>Title</things-i18n-msg>
     <things-i18n-msg auto msgid="label.created-at" msg="{{lCreatedAt}}" hidden>Created At</things-i18n-msg>
     <things-i18n-msg auto msgid="label.content" msg="{{lContent}}" hidden>Content</things-i18n-msg>
-    <things-i18n-msg auto msgid="text.message-is-full" msg="{{tMessageIsFull}}" hidden>Message is full, old message will be deleted.</things-i18n-msg>
 
     <iron-signals id="signals"></iron-signals>
     <iron-localstorage id="alarm-storage" name="alarmMessages" value="{{messages}}"></iron-localstorage>
+    <paper-toast id="toast-msg" dynamic-align></paper-toast>
 
     <paper-icon-button id="alarm-button" icon="social:notifications-none" alt="alarm" on-tap="toggleAlarm"></paper-icon-button>
     <paper-badge for="number" label="[[count]]" hidden="[[isNoMsg]]"></paper-badge>
@@ -153,7 +148,6 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
           </div>
         </div>
     </paper-dialog>
-
   </template>
 
   <script type="text/javascript">
@@ -266,9 +260,9 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
          */
         addMessage: function(message) {
           this.unshift('messages', message);
+          this.toggleToast();
 
           if(this.messages.length > this.maxCount && !this.ignoreMaxCount) {
-            this.openInfoMsg(this.tMessageIsFull)
             while(this.messages.length > this.maxCount) {
               this.splice('messages', -1, 1);
             }
@@ -333,6 +327,17 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
         removeMsg: function(idx) {
           this.splice('messages', idx, 1);
           this.calcCount();
+        },
+
+        /**
+         * 새로운 메시지 도착시 토스트 메시지 출력
+         */
+        toggleToast: function() {
+          var toastMsg = this.$['toast-msg'];
+          toastMsg.positionTarget = this.$['alarm-button'];
+          toastMsg.text = Things.DataGlobal.t('text.New Alarm Message is Arrived.')
+
+          toastMsg.toggle();
         }
       })
     })();
