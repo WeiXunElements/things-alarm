@@ -2,20 +2,25 @@
 
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-badge/paper-badge.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../iron-icons/maps-icons.html">
-<link rel="import" href="../iron-icons/notification-icons.html">
-<link rel="import" href="../iron-icons/places-icons.html">
+<link rel="import" href="../iron-icons/social-icons.html">
 <link rel="import" href="../iron-signals/iron-signals.html">
 <link rel="import" href="../iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 <link rel="import" href="../things-input-field/things-input-field.html">
 <link rel="import" href="../things-input-field/things-textarea.html">
+<link rel="import" href="../things-global-behavior/things-global-behavior.html">
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
 
 <!--
 things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()을 통해 count를 초기화 하는 컴퍼넌트
 
-  Example:
+Example:
 
     <things-alarm-badge
       count="10">
@@ -151,11 +156,11 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
   </template>
 
   <script type="text/javascript">
-    (function() {
       Polymer({
         is: "things-alarm-badge",
 
         behaviors: [
+
           Things.MsgBoxBehavior
         ],
 
@@ -168,6 +173,15 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
           /**
            * local storage에 저장된 message list
+           * <br>
+           * <pre>
+           * [{
+           *    type: String (badge,popup),
+           *    title: String,
+           *    message: String
+           * }]
+           * </pre>
+           * @type Array
            */
           messages: {
             type: Array,
@@ -176,6 +190,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
           /**
            * badge에 표시할 현재 message의 count
+           * @type Number
            */
           count: {
             type: Number,
@@ -184,6 +199,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
           /**
            * 보관할 수 있는 메시지의 최대수
+           * @type Number
            */
           maxCount: {
             type: Number,
@@ -192,6 +208,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
           /**
            * 보관함 최대수량을 무시할지 여부
+           * @type Boolean
            */
           ignoreMaxCount: {
             type: Boolean,
@@ -200,14 +217,16 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
           /**
            * count가 0이면 isNoMsg가 true가 되어 badge를 hidden 처리한다.
+           * @type Boolean
            */
           isNoMsg: {
             type: Boolean,
-            value: true
+            value: false
           },
 
           /**
            * subscribe한 message의 제목
+           * @type String
            */
           title: {
             type: String
@@ -215,6 +234,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
           /**
            * subscribe한 message의 내용
+           * @type String
            */
           content: {
             type: String
@@ -222,6 +242,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
           /**
            * message 생성 시간
+           * @type String
            */
           createdAt : {
             type: String
@@ -230,6 +251,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
         /**
          * iron-signal을 통한 subscribe event listener
+         * @param {event} subscribe 이벤트 입력
          */
         _alarmArrived: function(event) {
           var message = event.detail;
@@ -256,6 +278,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
         /**
          * 새로 전달 받은 message를 messages에 추가하고
          * 최대 수량에 따라 메시지를 제거함
+         * @param {message} 새로운 message 입력
          * count의 값을 계산하는 function 호출
          */
         addMessage: function(message) {
@@ -306,6 +329,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
          * toggle된 dropdown list에서 메시지를 클릭하면
          * 해당 메시지의 상세 내역을 다이얼로그로 보여주고
          * 확인한 removeMsg function을 호출
+         * @param {event}  event 입력
          */
         onMessageTap: function(event) {
           var idx = event.model.index;
@@ -323,6 +347,7 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
 
         /**
          * local storage의 index를 통해 확인한 메시지를 제거
+         * @param {index} local storage의 index 입력
          */
         removeMsg: function(idx) {
           this.splice('messages', idx, 1);
@@ -340,6 +365,5 @@ things-alarm-badge. count 횟수를 badge 형태로 출력하고 toggleAlarm()�
           toastMsg.toggle();
         }
       })
-    })();
   </script>
 </dom-module>
