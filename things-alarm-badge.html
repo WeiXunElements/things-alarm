@@ -279,7 +279,7 @@ Example:
          * 새로 전달 받은 message를 messages에 추가하고
          * 최대 수량에 따라 메시지를 제거함
          * @param {message} 새로운 message 입력
-         * count의 값을 계산하는 function 호출
+         * messages count의 값을 계산하는 function 호출
          */
         addMessage: function(message) {
           this.unshift('messages', message);
@@ -301,7 +301,7 @@ Example:
         },
 
         /**
-         * count를 계산하고 만약 0이면 badge를 숨긴다.
+         * messages count를 계산하고 만약 0이면 badge를 숨긴다.
          */
         calcCount: function() {
           if(this.messages) {
@@ -347,7 +347,7 @@ Example:
 
         /**
          * local storage의 index를 통해 확인한 메시지를 제거
-         * @param {index} local storage의 index 입력
+         * @param {index} localstorage 의 index 입력
          */
         removeMsg: function(idx) {
           this.splice('messages', idx, 1);
