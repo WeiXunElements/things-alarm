@@ -23,51 +23,80 @@
 ### 외부에서 벳지 카운트만 셋업하여사용
 Example:
 
+```html
     <things-alarm-badge
       count="10">
     </things-alarm-badge>
+```
 
 *****
 </br></br>
 ### 외부에서 messages을 통한 알람 제공
 Example:
 
+``` html
     <template is="dom-bind" id ="bind1">
       <things-alarm-badge align="center" id="alarm" messages="[[messages]]"></things-alarm-badge>
       <script type="text/javascript">
-        document.getElementById('alarm').messages =[{title : 'message1', created_at : '2017-03-26 12:00:00', content : 'Test'}];
-        document.getElementById('bind1').set('messages',[{title : 'message1', created_at : '2017-03-26 12:00:00', content : 'Test'}]);
+        document.getElementById('alarm').messages = [{
+            title: 'message1',
+            created_at: '2017-03-26 12:00:00',
+            content: 'Test'
+        }];
+        document.getElementById('bind1').set('messages', [{
+            title: 'message1',
+            created_at: '2017-03-26 12:00:00',
+            content: 'Test'
+        }]);
       </script>
     </template>
+```
 
 *****
 </br></br>
 ### iron-signal을 통한 메시지 제공</br>
 iron-signal을 통한 subscribe event listener
 
+```js
         this.fire('iron-signal',{name:'subscribed', data: message})
+```
 
 message는 오브젝트 구조는 아래와 같음
 
+```js
         {
-            type: String (badge,popup),
+            type: String, //badge,popup
             title: String,
             message: String
         }
+```
 
 [See iron-signals documentation](https://www.webcomponents.org/element/PolymerElements/iron-signals/)
 
 Example:
 
+```html
     <template is="dom-bind" id ="bind2">
       <paper-button onclick="onAddMessage()" raised> add messages</paper-button>
       <script type="text/javascript">
-        function onAddMessage(){
-          var msg = {title : 'message1', created_at : '2017-03-26 12:00:00', content : 'Test'};
-          document.getElementById('bind2').fire('iron-signal',{name:'subscribed',data:{type:'badge', message: msg}})
+        function onAddMessage() {
+            var msg = {
+                type: 'badge',
+                title: 'message1',
+                created_at: '2017-03-26 12:00:00',
+                content: 'Test'
+            };
+            document.getElementById('bind2').fire('iron-signal', {
+                name: 'subscribed',
+                data: {
+                    message: msg
+                }
+            })
         }
       </script>
     </template>
+```
+
 
 @demo demo/index.html
 -->
@@ -172,47 +201,78 @@ Example:
 
     </style>
     <template>
-        <things-i18n-msg auto msgid="label.title" msg="{{lTitle}}" hidden>Title</things-i18n-msg>
-        <things-i18n-msg auto msgid="label.created-at" msg="{{lCreatedAt}}" hidden>Created At</things-i18n-msg>
-        <things-i18n-msg auto msgid="label.content" msg="{{lContent}}" hidden>Content</things-i18n-msg>
+      <things-i18n-msg auto
+          msgid="label.title"
+          msg="{{lTitle}}"
+          hidden>Title</things-i18n-msg>
 
-        <iron-signals id="signals"></iron-signals>
-        <iron-localstorage id="alarm-storage" name="alarmMessages" value="{{messages}}"></iron-localstorage>
-        <paper-toast id="toast-msg" dynamic-align></paper-toast>
+      <things-i18n-msg auto
+          msgid="label.created-at"
+          msg="{{lCreatedAt}}"
+          hidden>Created At</things-i18n-msg>
 
-        <paper-icon-button id="alarm-button" icon="social:notifications-none" alt="alarm" on-tap="toggleAlarm"></paper-icon-button>
-        <paper-badge for="number" label="[[count]]" hidden="[[_isNoMsg]]"></paper-badge>
+      <things-i18n-msg auto
+          msgid="label.content"
+          msg="{{lContent}}"
+          hidden>Content</things-i18n-msg>
 
-        <iron-dropdown id="dropdown-list">
-            <div class="dropdown-content">
-                <template is="dom-repeat" items="[[messages]]">
-                    <paper-item on-tap="_onMessageTap">
-                        <strong><iron-icon icon="icons:error-outline"></iron-icon>[[item.title]]</strong>
-                        <span>[[item.created_at]]</span> [[item.message]]
-                    </paper-item>
-                </template>
-            </div>
-        </iron-dropdown>
+      <iron-signals id="signals"></iron-signals>
 
-        <paper-dialog id="msg-dialog">
-            <paper-toolbar>
-                <span class="title">Alarm Message</span>
-                <div class="buttonsGroup">
-                    <button dialog-dismiss class="close-btn"></button>
-                </div>
-            </paper-toolbar>
+      <iron-localstorage id="alarm-storage"
+          name="alarmMessages"
+          value="{{messages}}"></iron-localstorage>
 
-            <div>
-                <div class="layout horizontal">
-                    <things-input-field class="flex" label="[[lTitle]]" value="[[_title]]" readonly></things-input-field>
-                    <things-input-field class="flex" label="[[lCreatedAt]]" value="[[_createdAt]]" readonly></things-input-field>
-                </div>
-                <div>
-                    <things-textarea class="flex" label="[[lContent]]" value="[[_content]]" readonly></things-textarea>
-                </div>
-            </div>
-        </paper-dialog>
+      <paper-toast id="toast-msg"
+          dynamic-align></paper-toast>
+
+      <paper-icon-button id="alarm-button"
+          icon="social:notifications-none"
+          alt="alarm"
+          on-tap="toggleAlarm"></paper-icon-button>
+      <paper-badge for="number"
+          label="[[count]]"
+          hidden="[[_isNoMsg]]"></paper-badge>
+
+      <iron-dropdown id="dropdown-list">
+          <div class="dropdown-content">
+              <template is="dom-repeat" items="[[messages]]">
+                  <paper-item on-tap="_onMessageTap">
+                      <strong><iron-icon icon="icons:error-outline"></iron-icon>[[item.title]]</strong>
+                      <span>[[item.created_at]]</span> [[item.message]]
+                  </paper-item>
+              </template>
+          </div>
+      </iron-dropdown>
+      <paper-dialog id="msg-dialog">
+          <paper-toolbar>
+              <span class="title">Alarm Message</span>
+              <div class="buttonsGroup">
+                  <button dialog-dismiss
+                      class="close-btn"></button>
+              </div>
+          </paper-toolbar>
+
+          <div>
+              <div class="layout horizontal">
+                  <things-input-field class="flex"
+                      label="[[lTitle]]"
+                      value="[[_title]]"
+                      readonly></things-input-field>
+                  <things-input-field class="flex"
+                      label="[[lCreatedAt]]"
+                      value="[[_createdAt]]"
+                      readonly></things-input-field>
+              </div>
+              <div>
+                  <things-textarea class="flex"
+                      label="[[lContent]]"
+                      value="[[_content]]"
+                      readonly></things-textarea>
+              </div>
+          </div>
+      </paper-dialog>
     </template>
+
 
     <script type="text/javascript">
         Polymer({
