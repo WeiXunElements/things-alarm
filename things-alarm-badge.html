@@ -242,7 +242,6 @@ Example:
 
           /**
            * message 생성 시간
-           * @type String
            */
           createdAt : {
             type: String
@@ -251,7 +250,7 @@ Example:
 
         /**
          * iron-signal을 통한 subscribe event listener
-         * @param {event} subscribe 이벤트 입력
+         * @param {event} event 알람도착 이벤트
          */
         _alarmArrived: function(event) {
           var message = event.detail;
@@ -276,10 +275,8 @@ Example:
         },
 
         /**
-         * 새로 전달 받은 message를 messages에 추가하고
-         * 최대 수량에 따라 메시지를 제거함
-         * @param {message} 새로운 message 입력
-         * messages count의 값을 계산하는 function 호출
+         * 새로 전달 받은 message를 messages에 추가하고 최대 수량에 따라 메시지를 제거함
+         * @param {string} message 새로운 message 입력
          */
         addMessage: function(message) {
           this.unshift('messages', message);
@@ -347,7 +344,7 @@ Example:
 
         /**
          * local storage의 index를 통해 확인한 메시지를 제거
-         * @param {index} localstorage 의 index 입력
+         * @param {number} idx 의 index 입력
          */
         removeMsg: function(idx) {
           this.splice('messages', idx, 1);
