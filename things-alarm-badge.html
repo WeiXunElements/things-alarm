@@ -1,25 +1,25 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../paper-badge/paper-badge.html">
-<link rel="import" href="../iron-icons/social-icons.html">
-<link rel="import" href="../iron-signals/iron-signals.html">
-<link rel="import" href="../iron-localstorage/iron-localstorage.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
-<link rel="import" href="../things-input-field/things-input-field.html">
-<link rel="import" href="../things-input-field/things-textarea.html">
-<link rel="import" href="../things-global-behavior/things-global-behavior.html">
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
-<link rel="import" href="../paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../paper-toast/paper-toast.html">
-<link rel="import" href="../iron-dropdown/iron-dropdown.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
-<link rel="import" href="../paper-item/paper-item.html">
-<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html" />
+<link rel="import" href="../paper-badge/paper-badge.html" />
+<link rel="import" href="../iron-icons/social-icons.html" />
+<link rel="import" href="../iron-signals/iron-signals.html" />
+<link rel="import" href="../iron-localstorage/iron-localstorage.html" />
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
+<link rel="import" href="../things-input-field/things-input-field.html" />
+<link rel="import" href="../things-input-field/things-textarea.html" />
+<link rel="import" href="../things-global-behavior/things-global-behavior.html" />
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
+<link rel="import" href="../paper-toolbar/paper-toolbar.html" />
+<link rel="import" href="../paper-toast/paper-toast.html" />
+<link rel="import" href="../iron-dropdown/iron-dropdown.html" />
+<link rel="import" href="../iron-icon/iron-icon.html" />
+<link rel="import" href="../paper-item/paper-item.html" />
+<link rel="import" href="../paper-dialog/paper-dialog.html" />
 
 <!--
 ## 알람 count를 badge형태로 출력하고 드롭다운으로 알람 리스트를 화면에 출력
@@ -105,389 +105,360 @@ Example:
 @demo demo/index.html
 -->
 <dom-module id="things-alarm-badge">
-    <style>
-         :host {
-            --paper-badge-background: var(--things-secondary-background-color);
-            --paper-badge-width: 16px;
-            --paper-badge-height: 16px;
+  <style>
+    :host {
+      --paper-badge-background: var(--things-secondary-background-color);
+      --paper-badge-width: 16px;
+      --paper-badge-height: 16px;
+    }
+
+    .dropdown-content {
+      background-color: white;
+    }
+
+    label {
+      @apply (--things-label);
+    }
+
+    iron-dropdown {
+      margin: 40px 0 0 -5%;
+      min-width: 180px;
+      border: 2px solid rgba(0, 0, 0, 0.2);
+    }
+
+    iron-dropdown strong {
+      display: block;
+      font-size: 14px;
+      color: var(--things-error-color);
+      line-height: 1.7;
+    }
+
+    iron-dropdown span {
+      display: block;
+      font-size: 11px;
+      color: #999;
+      line-height: 1;
+    }
+
+    iron-dropdown paper-item {
+      @apply (--layout-vertical);
+      @apply (--things-dropdown-item);
+      padding: 0 5px;
+      display: block;
+      font-size: 12px !important;
+      line-height: 1.4;
+    }
+
+    iron-dropdown paper-item iron-icon {
+      @apply (--things-small-icon);
+      margin: -2px 2px 0 0;
+    }
+
+    paper-dialog {
+      position: fixed;
+      top: 10%;
+      bottom: 10%;
+      left: 15%;
+      right: 15%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
+
+    paper-dialog::shadow .toolbar-tools.paper-toolbar {
+      padding: 0;
+    }
+
+    paper-dialog::shadow span.title.things-image-selector {
+      margin-left: 15px !important;
+    }
+
+    paper-toolbar {
+      background-color: var(--things-primary-background-color);
+      height: 45px;
+      margin-top: 0px !important;
+      @apply (--things-padding-clear);
+    }
+
+    paper-toolbar::shadow #topBar {
+      height: 45px;
+    }
+
+    paper-toolbar .title {
+      margin-left: 32px !important;
+      line-height: initial !important;
+    }
+
+    .close-btn {
+      @apply (--things-header-button);
+      background: url(/images/icon-close.png) 100% 50% no-repeat;
+      margin-right: 10px;
+    }
+
+    paper-icon-button#alarm-button {
+      margin-right: 10px;
+    }
+
+    paper-badge {
+      margin: -33px 0 0 24px;
+    }
+  </style>
+  <template>
+    <things-i18n-msg auto msgid="label.title" msg="{{lTitle}}" hidden>Title</things-i18n-msg>
+
+    <things-i18n-msg auto msgid="label.created-at" msg="{{lCreatedAt}}" hidden>Created At</things-i18n-msg>
+
+    <things-i18n-msg auto msgid="label.content" msg="{{lContent}}" hidden>Content</things-i18n-msg>
+
+    <iron-signals id="signals"></iron-signals>
+
+    <iron-localstorage id="alarm-storage" name="alarmMessages" value="{{messages}}"></iron-localstorage>
+
+    <paper-toast id="toast-msg" dynamic-align></paper-toast>
+
+    <paper-icon-button
+      id="alarm-button"
+      icon="social:notifications-none"
+      alt="alarm"
+      on-tap="toggleAlarm"
+    ></paper-icon-button>
+    <paper-badge for="number" label="[[count]]" hidden="[[_isNoMsg]]"></paper-badge>
+
+    <iron-dropdown id="dropdown-list">
+      <div class="dropdown-content">
+        <template is="dom-repeat" items="[[messages]]">
+          <paper-item on-tap="_onMessageTap">
+            <strong><iron-icon icon="icons:error-outline"></iron-icon>[[item.title]]</strong>
+            <span>[[item.created_at]]</span> [[item.message]]
+          </paper-item>
+        </template>
+      </div>
+    </iron-dropdown>
+    <paper-dialog id="msg-dialog">
+      <paper-toolbar>
+        <span class="title">Alarm Message</span>
+        <div class="buttonsGroup">
+          <button dialog-dismiss class="close-btn"></button>
+        </div>
+      </paper-toolbar>
+
+      <div>
+        <div class="layout horizontal">
+          <things-input-field class="flex" label="[[lTitle]]" value="[[_title]]" readonly></things-input-field>
+          <things-input-field class="flex" label="[[lCreatedAt]]" value="[[_createdAt]]" readonly></things-input-field>
+        </div>
+        <div>
+          <things-textarea class="flex" label="[[lContent]]" value="[[_content]]" readonly></things-textarea>
+        </div>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script type="text/javascript">
+    Polymer({
+      is: 'things-alarm-badge',
+
+      behaviors: [Things.MsgBoxBehavior],
+
+      listeners: {
+        'alarm-storage.iron-localstorage-load-empty': 'storageEmpty',
+        'signals.iron-signal-subscribed': '_alarmArrived',
+      },
+
+      properties: {
+        /**
+         * local storage에 저장된 message list
+         * <br>
+         * <pre>
+         * [{
+         *    type: String (badge,popup),
+         *    title: String,
+         *    message: String
+         * }]
+         * </pre>
+         * @type Array
+         */
+        messages: {
+          type: Array,
+          observer: '_messagesChanged',
+        },
+
+        /**
+         * badge에 표시할 현재 message의 count
+         * @type Number
+         */
+        count: {
+          type: Number,
+          value: 0,
+        },
+
+        /**
+         * 보관할 수 있는 메시지의 최대수
+         * @type Number
+         */
+        maxCount: {
+          type: Number,
+          value: 20,
+        },
+
+        /**
+         * 보관함 최대수량을 무시할지 여부
+         * @type Boolean
+         */
+        ignoreMaxCount: {
+          type: Boolean,
+          value: false,
+        },
+
+        /**
+         * count가 0이면 _isNoMsg가 true가 되어 badge를 hidden 처리한다.
+         * @type Boolean
+         */
+        _isNoMsg: {
+          type: Boolean,
+          value: false,
+        },
+
+        /**
+         * subscribe한 message의 제목
+         * @type String
+         */
+        _title: {
+          type: String,
+        },
+
+        /**
+         * subscribe한 message의 내용
+         * @type String
+         */
+        _content: {
+          type: String,
+        },
+
+        /**
+         * message 생성 시간
+         * @type String
+         */
+        _createdAt: {
+          type: String,
+        },
+      },
+
+      /**
+       * iron-signal을 통한 subscribe event listener
+       * this.fire('iron-signal',{name:'subscribed', data: null})
+       * [See iron-signals documentation](http://elements.hatiolab.com/elements/iron-signals/)
+       * @param {event} event #### :알람도착 이벤트
+       */
+      _alarmArrived: function (event) {
+        var message = event.detail;
+        this.addMessage(message);
+
+        switch (message.type) {
+          case 'popup':
+            this.openConfirmMsg({
+              type: 'warning',
+              title: message.title,
+              text: message.message,
+            });
+
+            break;
+
+          case 'badge':
+            break;
+
+          default:
+            break;
         }
+      },
 
-        .dropdown-content {
-            background-color: white;
+      /**
+       * 새로 전달 받은 message를 messages에 추가하고 최대 수량에 따라 메시지를 제거함
+       * @param {string} message #### :새로운 message 입력
+       */
+      addMessage: function (message) {
+        this.unshift('messages', message);
+        this.toggleToast();
+
+        if (this.messages.length > this.maxCount && !this.ignoreMaxCount) {
+          while (this.messages.length > this.maxCount) {
+            this.splice('messages', -1, 1);
+          }
         }
+        this._calcCount();
+      },
 
-        label {
-            @apply(--things-label);
+      /**
+       * 메시지가 변경 되었을 때 count를 다시 계산한다.
+       */
+      _messagesChanged: function () {
+        this._calcCount();
+      },
+
+      /**
+       * messages count를 계산하고 만약 0이면 badge를 숨긴다.
+       */
+      _calcCount: function () {
+        if (this.messages) {
+          this.count = this.messages.length;
         }
+        this._isNoMsg = this.count == 0 ? true : false;
+      },
 
-        iron-dropdown {
-            margin: 40px 0 0 -5%;
-            min-width: 180px;
-            border: 2px solid rgba(0, 0, 0, .2);
-        }
+      /**
+       * badge 클릭시 드롭다운 리스트를 토글
+       */
+      toggleAlarm: function () {
+        if (this.count == 0) return;
+        this.$['dropdown-list'].toggle();
+      },
 
-        iron-dropdown strong {
-            display: block;
-            font-size: 14px;
-            color: var(--things-error-color);
-            line-height: 1.7;
-        }
+      /**
+       * local storage가 정의 되어 있지 않을때 빈값으로 초기화 한다.
+       */
+      storageEmpty: function () {
+        this.messages = [];
+      },
 
-        iron-dropdown span {
-            display: block;
-            font-size: 11px;
-            color: #999;
-            line-height: 1;
-        }
+      /**
+       * toggle된 dropdown list에서 메시지를 클릭하면
+       * 해당 메시지의 상세 내역을 다이얼로그로 보여주고
+       * 확인한 removeMsg function을 호출
+       * @param {event} event #### : Dropdown list Tap Event 입력
+       */
+      _onMessageTap: function (event) {
+        var idx = event.model.index;
+        var item = event.model.item;
 
-        iron-dropdown paper-item {
-            @apply(--layout-vertical);
-            @apply(--things-dropdown-item);
-            padding: 0 5px;
-            display: block;
-            font-size: 12px !important;
-            line-height: 1.4;
-        }
+        this._title = item.title;
+        this._createdAt = item.created_at;
+        this._msgType = item.type;
+        this._content = item.message;
 
-        iron-dropdown paper-item iron-icon {
-            @apply(--things-small-icon);
-            margin: -2px 2px 0 0;
-        }
+        this.toggleAlarm();
+        this.$['msg-dialog'].open();
+        this.removeMsg(idx);
+      },
 
-        paper-dialog {
-            position: fixed;
-            top: 10%;
-            bottom: 10%;
-            left: 15%;
-            right: 15%;
-            margin: 0px;
-            @apply(--layout-flex);
-            @apply(--layout-vertical);
-        }
+      /**
+       * local storage의 index를 통해 확인한 메시지를 제거
+       * @param {number} idx #### : Mesasge의 index 입력
+       */
+      removeMsg: function (idx) {
+        this.splice('messages', idx, 1);
+        this._calcCount();
+      },
 
-        paper-dialog::shadow .toolbar-tools.paper-toolbar {
-            padding: 0
-        }
+      /**
+       * 새로운 메시지 도착시 토스트 메시지 출력
+       */
+      toggleToast: function () {
+        var toastMsg = this.$['toast-msg'];
+        toastMsg.positionTarget = this.$['alarm-button'];
+        toastMsg.text = Things.DataGlobal.t('text.New Alarm Message is Arrived.');
 
-        paper-dialog::shadow span.title.things-image-selector {
-            margin-left: 15px !important
-        }
-
-        paper-toolbar {
-            background-color: var(--things-primary-background-color);
-            height: 45px;
-            margin-top: 0px !important;
-            @apply(--things-padding-clear)
-        }
-
-        paper-toolbar::shadow #topBar {
-            height: 45px;
-        }
-
-        paper-toolbar .title {
-            margin-left: 32px !important;
-            line-height: initial !important;
-        }
-
-        .close-btn {
-            @apply(--things-header-button);
-            background: url(/images/icon-close.png) 100% 50% no-repeat;
-            margin-right: 10px;
-        }
-
-        paper-icon-button#alarm-button {
-            margin-right: 10px;
-        }
-
-        paper-badge {
-            margin: -33px 0 0 24px;
-        }
-
-    </style>
-    <template>
-      <things-i18n-msg auto
-          msgid="label.title"
-          msg="{{lTitle}}"
-          hidden>Title</things-i18n-msg>
-
-      <things-i18n-msg auto
-          msgid="label.created-at"
-          msg="{{lCreatedAt}}"
-          hidden>Created At</things-i18n-msg>
-
-      <things-i18n-msg auto
-          msgid="label.content"
-          msg="{{lContent}}"
-          hidden>Content</things-i18n-msg>
-
-      <iron-signals id="signals"></iron-signals>
-
-      <iron-localstorage id="alarm-storage"
-          name="alarmMessages"
-          value="{{messages}}"></iron-localstorage>
-
-      <paper-toast id="toast-msg"
-          dynamic-align></paper-toast>
-
-      <paper-icon-button id="alarm-button"
-          icon="social:notifications-none"
-          alt="alarm"
-          on-tap="toggleAlarm"></paper-icon-button>
-      <paper-badge for="number"
-          label="[[count]]"
-          hidden="[[_isNoMsg]]"></paper-badge>
-
-      <iron-dropdown id="dropdown-list">
-          <div class="dropdown-content">
-              <template is="dom-repeat" items="[[messages]]">
-                  <paper-item on-tap="_onMessageTap">
-                      <strong><iron-icon icon="icons:error-outline"></iron-icon>[[item.title]]</strong>
-                      <span>[[item.created_at]]</span> [[item.message]]
-                  </paper-item>
-              </template>
-          </div>
-      </iron-dropdown>
-      <paper-dialog id="msg-dialog">
-          <paper-toolbar>
-              <span class="title">Alarm Message</span>
-              <div class="buttonsGroup">
-                  <button dialog-dismiss
-                      class="close-btn"></button>
-              </div>
-          </paper-toolbar>
-
-          <div>
-              <div class="layout horizontal">
-                  <things-input-field class="flex"
-                      label="[[lTitle]]"
-                      value="[[_title]]"
-                      readonly></things-input-field>
-                  <things-input-field class="flex"
-                      label="[[lCreatedAt]]"
-                      value="[[_createdAt]]"
-                      readonly></things-input-field>
-              </div>
-              <div>
-                  <things-textarea class="flex"
-                      label="[[lContent]]"
-                      value="[[_content]]"
-                      readonly></things-textarea>
-              </div>
-          </div>
-      </paper-dialog>
-    </template>
-
-
-    <script type="text/javascript">
-        Polymer({
-            is: "things-alarm-badge",
-
-            behaviors: [
-
-                Things.MsgBoxBehavior
-            ],
-
-            listeners: {
-                "alarm-storage.iron-localstorage-load-empty": "storageEmpty",
-                "signals.iron-signal-subscribed": '_alarmArrived'
-            },
-
-            properties: {
-
-                /**
-                 * local storage에 저장된 message list
-                 * <br>
-                 * <pre>
-                 * [{
-                 *    type: String (badge,popup),
-                 *    title: String,
-                 *    message: String
-                 * }]
-                 * </pre>
-                 * @type Array
-                 */
-                messages: {
-                    type: Array,
-                    observer: '_messagesChanged'
-                },
-
-                /**
-                 * badge에 표시할 현재 message의 count
-                 * @type Number
-                 */
-                count: {
-                    type: Number,
-                    value: 0
-                },
-
-                /**
-                 * 보관할 수 있는 메시지의 최대수
-                 * @type Number
-                 */
-                maxCount: {
-                    type: Number,
-                    value: 20
-                },
-
-                /**
-                 * 보관함 최대수량을 무시할지 여부
-                 * @type Boolean
-                 */
-                ignoreMaxCount: {
-                    type: Boolean,
-                    value: false
-                },
-
-                /**
-                 * count가 0이면 _isNoMsg가 true가 되어 badge를 hidden 처리한다.
-                 * @type Boolean
-                 */
-                _isNoMsg: {
-                    type: Boolean,
-                    value: false
-                },
-
-                /**
-                 * subscribe한 message의 제목
-                 * @type String
-                 */
-                _title: {
-                    type: String
-                },
-
-                /**
-                 * subscribe한 message의 내용
-                 * @type String
-                 */
-                _content: {
-                    type: String
-                },
-
-                /**
-                 * message 생성 시간
-                 * @type String
-                 */
-                _createdAt: {
-                    type: String
-                }
-            },
-
-            /**
-             * iron-signal을 통한 subscribe event listener
-             * this.fire('iron-signal',{name:'subscribed', data: null})
-             * [See iron-signals documentation](http://elements.hatiolab.com/elements/iron-signals/)
-             * @param {event} event #### :알람도착 이벤트
-             */
-            _alarmArrived: function(event) {
-                var message = event.detail;
-                this.addMessage(message);
-
-                switch (message.type) {
-                    case 'popup':
-                        this.openConfirmMsg({
-                            type: 'warning',
-                            title: message.title,
-                            text: message.message
-                        })
-
-                        break;
-
-                    case 'badge':
-                        break;
-
-                    default:
-                        break;
-                }
-            },
-
-            /**
-             * 새로 전달 받은 message를 messages에 추가하고 최대 수량에 따라 메시지를 제거함
-             * @param {string} message #### :새로운 message 입력
-             */
-            addMessage: function(message) {
-                this.unshift('messages', message);
-                this.toggleToast();
-
-                if (this.messages.length > this.maxCount && !this.ignoreMaxCount) {
-                    while (this.messages.length > this.maxCount) {
-                        this.splice('messages', -1, 1);
-                    }
-                }
-                this._calcCount();
-            },
-
-            /**
-             * 메시지가 변경 되었을 때 count를 다시 계산한다.
-             */
-            _messagesChanged: function() {
-                this._calcCount();
-            },
-
-            /**
-             * messages count를 계산하고 만약 0이면 badge를 숨긴다.
-             */
-            _calcCount: function() {
-                if (this.messages) {
-                    this.count = this.messages.length;
-                }
-                this._isNoMsg = (this.count == 0) ? true : false;
-            },
-
-            /**
-             * badge 클릭시 드롭다운 리스트를 토글
-             */
-            toggleAlarm: function() {
-                if (this.count == 0) return;
-                this.$['dropdown-list'].toggle();
-            },
-
-            /**
-             * local storage가 정의 되어 있지 않을때 빈값으로 초기화 한다.
-             */
-            storageEmpty: function() {
-                this.messages = [];
-            },
-
-            /**
-             * toggle된 dropdown list에서 메시지를 클릭하면
-             * 해당 메시지의 상세 내역을 다이얼로그로 보여주고
-             * 확인한 removeMsg function을 호출
-             * @param {event} event #### : Dropdown list Tap Event 입력
-             */
-            _onMessageTap: function(event) {
-                var idx = event.model.index;
-                var item = event.model.item;
-
-                this._title = item.title;
-                this._createdAt = item.created_at;
-                this._msgType = item.type;
-                this._content = item.message;
-
-                this.toggleAlarm();
-                this.$['msg-dialog'].open();
-                this.removeMsg(idx);
-            },
-
-            /**
-             * local storage의 index를 통해 확인한 메시지를 제거
-             * @param {number} idx #### : Mesasge의 index 입력
-             */
-            removeMsg: function(idx) {
-                this.splice('messages', idx, 1);
-                this._calcCount();
-            },
-
-            /**
-             * 새로운 메시지 도착시 토스트 메시지 출력
-             */
-            toggleToast: function() {
-                var toastMsg = this.$['toast-msg'];
-                toastMsg.positionTarget = this.$['alarm-button'];
-                toastMsg.text = Things.DataGlobal.t('text.New Alarm Message is Arrived.')
-
-                toastMsg.toggle();
-            }
-        })
-
-    </script>
+        toastMsg.toggle();
+      },
+    });
+  </script>
 </dom-module>
